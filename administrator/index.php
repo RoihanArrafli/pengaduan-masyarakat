@@ -1,24 +1,16 @@
+
 <?php
 SESSION_START();
+include '../lib/config.php';
 
-include 'lib/config.php';
 
-if (isset($_SESSION['id'])) {
-    if ($_SESSION['level'] == 'masyarakat') {
-        header('Location:/pengaduan-masyarakat/masyarakat/menulis-pengaduan.php');
-    } elseif (($_SESSION['level'] == 'admin') or ($_SESSION['level'] == 'petugas')) {
-        header('Location:/pengaduan-masyarakat/administrator/verifikasi/nonvalid.php');
-    } else {
-        header('Location:./logout.php');
-    }
-}
 
 if (isset($_POST['login'])) {
 
     $username  = $_POST['username'];
     $password = $_POST['password'];
 
-    $query = "SELECT * FROM masyarakat WHERE username = '$username' AND password = '$password';";
+    $query = "SELECT * FROM petugas WHERE username = '$username' AND password = '$password';";
     // var_dump($query);
 
     $execQuery = mysqli_query($conn, $query);
@@ -28,12 +20,14 @@ if (isset($_POST['login'])) {
 
     if ($numRows == 1) {
         foreach ($getData as $data) {
-            $_SESSION['id'] = $data['nik'];
-            $_SESSION['nama'] = $data['nama'];
-            $_SESSION['level'] = 'masyarakat';
+            $_SESSION['id'] = $data['id_petugas'];
+            $_SESSION['nama'] = $data['nama_petugas'];
+            $_SESSION['level'] = $data['level'];
         }
-        header('Location:masyarakat/menulis-pengaduan.php');
+        // var_dump($_SESSION);
+        header('Location:./verifikasi/nonvalid.php');
         echo "<script>alert('data yang anda masukkan benar')</script>";
+
     } else {
         echo "<script>alert('data yang anda masukkan salah')</script>";
     }
@@ -43,32 +37,30 @@ if (isset($_POST['login'])) {
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <title>Login</title>
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <title>Login Admin</title>
 </head>
-
 <body>
     <div class="container">
         <div class="row justify-content-center align-center">
             <div class="card log-lg-6">
                 <div class="card-header">
-                    <center>Login Masyarakat</center>
+                    <center>Login Admin</center>
                 </div>
                 <div class="card-body">
                     <form method="POST">
                         <div class="mb-3">
-                            <input type="text" name="username" placeholder="Username" class="form-control">
+                            <input type="text" name="username" placeholder="Username"  class="form-control">
                         </div>
                         <div class="mb-3">
-                            <input type="password" name="password" placeholder="Password" class="form-control">
+                            <input type="password" name="password" placeholder="Password"  class="form-control">
                         </div>
                         <div class="mb-3">
-                            <input type="submit" name="login" value="login" class="btn btn-primary" class="form-control">
+                            <input type="submit" name="login" value="login" class="btn btn-primary"> 
                         </div>
                     </form>
                 </div>
@@ -76,5 +68,4 @@ if (isset($_POST['login'])) {
         </div>
     </div>
 </body>
-
 </html>
